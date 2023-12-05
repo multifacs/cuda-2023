@@ -9,18 +9,14 @@ __global__ void saxpy_kernel(const int n, const float a, float *x,
                              const int incx, float *y, const int incy) {
   const int i = blockIdx.x * blockDim.x + threadIdx.x;
 
-  if (i < n) {
-    y[i * incy] += a * x[i * incx];
-  }
+  y[i * incy] += a * x[i * incx];
 }
 
 __global__ void daxpy_kernel(const int n, const double a, double *x,
                              const int incx, double *y, const int incy) {
   const int i = blockIdx.x * blockDim.x + threadIdx.x;
 
-  if (i < n) {
-    y[i * incy] += a * x[i * incx];
-  }
+  y[i * incy] += a * x[i * incx];
 }
 
 void saxpy_gpu(const int n, const float a, float *x, const int incx, float *y,
