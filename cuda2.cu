@@ -228,7 +228,6 @@ int main() {
   delete[] xFloat;
   delete[] yFloat;
 
-  aFloat = 10.0f;
   xFloat = new float[sizeX];
   yFloat = new float[sizeY];
   for (int i = 0; i < n; ++i) {
@@ -265,7 +264,6 @@ int main() {
   }
 
   const double aDouble = 10.0;
-
   double *xDouble = new double[sizeX];
   double *yDouble = new double[sizeY];
   for (int i = 0; i < n; ++i) {
@@ -285,7 +283,6 @@ int main() {
   delete[] xDouble;
   delete[] yDouble;
 
-  aDouble = 10.0;
   xDouble = new double[sizeX];
   yDouble = new double[sizeY];
   for (int i = 0; i < n; ++i) {
