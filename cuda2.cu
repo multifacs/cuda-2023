@@ -57,18 +57,18 @@ void saxpy_gpu(const int n, const float a, float *x, const int incx, float *y,
     return;
   }
 
-  cudaEvent_t startF, stopF;
+  cudaEvent_t startTime, stopF;
   float gpuTimeF = 0.0f;
 
-  cudaEventCreate(&startF);
+  cudaEventCreate(&startTime);
   cudaEventCreate(&stopF);
-  cudaEventRecord(startF, 0);
+  cudaEventRecord(startTime, 0);
 
   saxpy_kernel<<<numBlocks, blocksSize>>>(n, a, gpuX, incx, gpuY, incy);
 
   cudaEventRecord(stopF, 0);
   cudaEventSynchronize(stopF);
-  cudaEventElapsedTime(&gpuTimeF, startF, stopF);
+  cudaEventElapsedTime(&gpuTimeF, startTime, stopF);
 
   printf("OpenGL: %dms  size: %d", int(gpuTimeF), blocksSize);
 
@@ -81,7 +81,7 @@ void saxpy_gpu(const int n, const float a, float *x, const int incx, float *y,
 
   cudaFree(gpuX);
   cudaFree(gpuY);
-  cudaEventDestroy(startF);
+  cudaEventDestroy(startTime);
   cudaEventDestroy(stopF);
   return;
 }
@@ -121,18 +121,18 @@ void daxpy_gpu(const int n, const double a, double *x, const int incx,
     return;
   }
 
-  cudaEvent_t startD, stopD;
+  cudaEvent_t startTime, stopD;
   float gpuTimeD = 0.0f;
 
-  cudaEventCreate(&startD);
+  cudaEventCreate(&startTime);
   cudaEventCreate(&stopD);
-  cudaEventRecord(startD, 0);
+  cudaEventRecord(startTime, 0);
 
   daxpy_kernel<<<numBlocks, blocksSize>>>(n, a, gpuX, incx, gpuY, incy);
 
   cudaEventRecord(stopD, 0);
   cudaEventSynchronize(stopD);
-  cudaEventElapsedTime(&gpuTimeD, startD, stopD);
+  cudaEventElapsedTime(&gpuTimeD, startTime, stopD);
 
   printf("OpenGL: %dms  size: %d", int(gpuTimeD), blocksSize);
 
@@ -145,7 +145,7 @@ void daxpy_gpu(const int n, const double a, double *x, const int incx,
 
   cudaFree(gpuX);
   cudaFree(gpuY);
-  cudaEventDestroy(startD);
+  cudaEventDestroy(startTime);
   cudaEventDestroy(stopD);
   return;
 }
@@ -209,128 +209,115 @@ int main() {
   int block_size;
   int num_blocks;
 
-  const float aF = 10.0f;
-
-  float *xF = new float[sizeX];
-  float *yF = new float[sizeY];
-
+  const float aFloat = 10.0f;
+  float *xFloat = new float[sizeX];
+  float *yFloat = new float[sizeY];
   for (int i = 0; i < n; ++i) {
-    xF[i] = 5.0f;
-    yF[i] = 1.0f;
+    xFloat[i] = 5.0f;
+    yFloat[i] = 1.0f;
   }
 
-  double startF = omp_get_wtime();
-  saxpy(n, aF, xF, incx, yF, incy);
-  double endF = omp_get_wtime();
+  double startTime = omp_get_wtime();
+  saxpy(n, aFloat, xFloat, incx, yFloat, incy);
+  double endTime = omp_get_wtime();
 
   printf("Saxpy Type Float\n");
-  printf("Sequential: %dms", int((endF - startF) * 1000.0));
+  printf("Sequential: %dms", int((endTime - startTime) * 1000.0));
   printf("\n");
 
-  delete[] xF;
-  delete[] yF;
+  delete[] xFloat;
+  delete[] yFloat;
 
-  const float aPF = 10.0f;
-
-  float *xPF = new float[sizeX];
-  float *yPF = new float[sizeY];
-
+  aFloat = 10.0f;
+  xFloat = new float[sizeX];
+  yFloat = new float[sizeY];
   for (int i = 0; i < n; ++i) {
-    xPF[i] = 5.0f;
-    yPF[i] = 1.0f;
+    xFloat[i] = 5.0f;
+    yFloat[i] = 1.0f;
   }
 
-  double startPF = omp_get_wtime();
-  saxpy_omp(n, aPF, xPF, incx, yPF, incy);
-  double endPF = omp_get_wtime();
+  startTime = omp_get_wtime();
+  saxpy_omp(n, aFloat, xFloat, incx, yFloat, incy);
+  endTime = omp_get_wtime();
 
-  printf("OpenMP: %dms", int((endPF - startPF) * 1000.0));
+  printf("OpenMP: %dms", int((endTime - startTime) * 1000.0));
   printf("\n");
 
-  delete[] xPF;
-  delete[] yPF;
-
-  const float aGF = 10.0f;
-
-  float *xGF;
-  float *yGF;
+  delete[] xFloat;
+  delete[] yFloat;
 
   for (int i = 8; i <= 128; i *= 2) {
     block_size = i;
     num_blocks = (n + block_size - 1) / block_size;
 
-    xGF = new float[sizeX];
-    yGF = new float[sizeY];
+    xFloat = new float[sizeX];
+    yFloat = new float[sizeY];
 
     for (int i = 0; i < n; ++i) {
-      xGF[i] = 5.0;
-      yGF[i] = 1.0;
+      xFloat[i] = 5.0;
+      yFloat[i] = 1.0;
     }
-    saxpy_gpu(n, aGF, xGF, incx, yGF, incy, num_blocks, block_size);
+    saxpy_gpu(n, aFloat, xFloat, incx, yFloat, incy, num_blocks, block_size);
     printf("\n");
 
-    delete[] xGF;
-    delete[] yGF;
+    delete[] xFloat;
+    delete[] yFloat;
   }
 
-  const double aD = 10.0;
+  const double aDouble = 10.0;
 
-  double *xD = new double[sizeX];
-  double *yD = new double[sizeY];
-
+  double *xDouble = new double[sizeX];
+  double *yDouble = new double[sizeY];
   for (int i = 0; i < n; ++i) {
-    xD[i] = 5.0;
-    yD[i] = 1.0;
+    xDouble[i] = 5.0;
+    yDouble[i] = 1.0;
   }
 
-  double startD = omp_get_wtime();
-  daxpy(n, aD, xD, incx, yD, incy);
-  double endD = omp_get_wtime();
+  startTime = omp_get_wtime();
+  daxpy(n, aDouble, xDouble, incx, yDouble, incy);
+  endTime = omp_get_wtime();
 
   printf("\n");
   printf("Daxpy Type Double\n");
-  printf("Sequential: %dms", int((endD - startD) * 1000.0));
+  printf("Sequential: %dms", int((endTime - startTime) * 1000.0));
   printf("\n");
 
-  delete[] xD;
-  delete[] yD;
+  delete[] xDouble;
+  delete[] yDouble;
 
-  const double aPD = 10.0;
-
-  double *xPD = new double[sizeX];
-  double *yPD = new double[sizeY];
-
+  aDouble = 10.0;
+  xDouble = new double[sizeX];
+  yDouble = new double[sizeY];
   for (int i = 0; i < n; ++i) {
-    xPD[i] = 5.0;
-    yPD[i] = 1.0;
+    xDouble[i] = 5.0;
+    yDouble[i] = 1.0;
   }
 
-  double startPD = omp_get_wtime();
-  daxpy_omp(n, aPD, xPD, incx, yPD, incy);
-  double endPD = omp_get_wtime();
+  startTime = omp_get_wtime();
+  daxpy_omp(n, aDouble, xDouble, incx, yDouble, incy);
+  endTime = omp_get_wtime();
 
-  printf("OpenMP: %dms", int((endPD - startPD) * 1000));
+  printf("OpenMP: %dms", int((endTime - startTime) * 1000));
   printf("\n");
-
-  delete[] xPD;
-  delete[] yPD;
+  delete[] xDouble;
+  delete[] yDouble;
 
   for (int i = 8; i <= 128; i *= 2) {
     block_size = i;
     num_blocks = (n + block_size - 1) / block_size;
 
-    xD = new double[sizeX];
-    yD = new double[sizeY];
-
+    xDouble = new double[sizeX];
+    yDouble = new double[sizeY];
     for (int i = 0; i < n; ++i) {
-      xD[i] = 5.0;
-      yD[i] = 1.0;
+      xDouble[i] = 5.0;
+      yDouble[i] = 1.0;
     }
-    daxpy_gpu(n, aD, xD, incx, yD, incy, num_blocks, block_size);
+
+    daxpy_gpu(n, aDouble, xDouble, incx, yDouble, incy, num_blocks, block_size);
     printf("\n");
 
-    delete[] xD;
-    delete[] yD;
+    delete[] xDouble;
+    delete[] yDouble;
   }
 
   return 0;
