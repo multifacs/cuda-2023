@@ -207,10 +207,16 @@ void float_matrix_multiplication(const int m, const int n, const int k,
 
 void float_matrix_multiplication_omp(const int m, const int n, const int k,
                                      float* x, float* y, float* z) {
-#pragma omp parallel for
-  for (int i = 0; i < m; ++i)
-    for (int p = 0; p < k; ++p)
-      for (int j = 0; j < n; ++j) z[i * k + p] += x[i * n + j] * y[j * k + p];
+#pragma omp parallel for private(i, j, k) shared(A, B, C)
+  for (i = 0; i < m; ++i) {
+    for (p = 0; p < n; ++j) {
+      float sum = 0;
+      for (j = 0; j < k; ++k) {
+        sum += x[i * n + j] * y[j * k + p];
+      }
+      z[i * k + p] = sum;
+    }
+  }
 }
 
 int main() {
