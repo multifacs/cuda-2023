@@ -209,7 +209,7 @@ void float_matrix_multiplication_omp(const int m, const int n, const int k,
                                      float* x, float* y, float* z) {
   int i, p, j;
   omp_set_num_threads(2);
-#pragma omp parallel for private(i, p, j) shared(x, y, z)
+#pragma omp parallel for collapse(2) private(i, p, j) shared(x, y, z)
   for (i = 0; i < m; ++i) {
     for (p = 0; p < k; ++j) {
       float sum = 0;
