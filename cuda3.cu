@@ -211,9 +211,9 @@ void float_matrix_multiplication_omp(const int m, const int n, const int k,
   omp_set_num_threads(2);
 #pragma omp parallel for private(i, p, j) shared(x, y, z)
   for (i = 0; i < m; ++i) {
-    for (p = 0; p < n; ++j) {
+    for (p = 0; p < k; ++j) {
       float sum = 0;
-      for (j = 0; j < k; ++k) {
+      for (j = 0; j < n; ++j) {
         sum += x[i * n + j] * y[j * k + p];
       }
       z[i * k + p] = sum;
