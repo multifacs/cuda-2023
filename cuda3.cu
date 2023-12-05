@@ -103,7 +103,7 @@ void float_matrix_multiplication_cuda(const int m, const int n, const int k,
   cudaEventSynchronize(stop);
   cudaEventElapsedTime(&gpuTime, start, stop);
 
-  printf("OpenGL: %dms", int(gpuTime));
+  printf("CUDA: %dms", int(gpuTime));
   printf("\n");
 
   cudaStatus =
@@ -180,7 +180,7 @@ void block_float_matrix_multiplication_cuda(const int m, const int n,
   cudaEventSynchronize(stop);
   cudaEventElapsedTime(&gpuTime, start, stop);
 
-  printf("OpenGL GEMM: %dms", int(gpuTime));
+  printf("CUDA GEMM: %dms", int(gpuTime));
   printf("\n");
 
   cudaStatus =

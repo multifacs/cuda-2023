@@ -66,7 +66,7 @@ void saxpy_gpu(const int n, const float a, float *x, const int incx, float *y,
   cudaEventSynchronize(stopF);
   cudaEventElapsedTime(&gpuTimeF, startTime, stopF);
 
-  printf("OpenGL: %dms  size: %d", int(gpuTimeF), blocksSize);
+  printf("CUDA: %dms  size: %d", int(gpuTimeF), blocksSize);
 
   cudaStatus =
       cudaMemcpy(y, gpuY, sizeY * sizeof(float), cudaMemcpyDeviceToHost);
@@ -130,7 +130,7 @@ void daxpy_gpu(const int n, const double a, double *x, const int incx,
   cudaEventSynchronize(stopD);
   cudaEventElapsedTime(&gpuTimeD, startTime, stopD);
 
-  printf("OpenGL: %dms  size: %d", int(gpuTimeD), blocksSize);
+  printf("CUDA: %dms  size: %d", int(gpuTimeD), blocksSize);
 
   cudaStatus =
       cudaMemcpy(y, gpuY, sizeY * sizeof(double), cudaMemcpyDeviceToHost);
