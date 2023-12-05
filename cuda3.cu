@@ -214,108 +214,49 @@ void float_matrix_multiplication_omp(const int m, const int n, const int k,
 }
 
 int main() {
-  const int n_1 = 1024;
-  const int m_1 = 1024;
-  const int k_1 = 1024;
+  const int N = 1024;
 
-  float* x_1 = new float[n_1 * m_1];
-  float* y_1 = new float[n_1 * k_1];
-  float* z_1 = new float[m_1 * k_1];
+  float* x = new float[N * N];
+  float* y = new float[N * N];
+  float* z = new float[N * N];
 
-  for (int i = 0; i < n_1 * m_1; i++) {
-    x_1[i] = 1.0;
+  for (int i = 0; i < N * N; i++) {
+    x[i] = 1.0;
   }
-  for (int i = 0; i < n_1 * k_1; i++) {
-    y_1[i] = 1.0;
+  for (int i = 0; i < N * N; i++) {
+    y[i] = 1.0;
   }
-  for (int i = 0; i < m_1 * k_1; i++) {
-    z_1[i] = 0.0;
+  for (int i = 0; i < N * N; i++) {
+    z[i] = 0.0;
   }
 
-  float start_1 = omp_get_wtime();
-  float_matrix_multiplication(m_1, n_1, k_1, x_1, y_1, z_1);
-  float end_1 = omp_get_wtime();
+  float startTime = omp_get_wtime();
+  float_matrix_multiplication(N, N, N, x, y, z);
+  float endTime = omp_get_wtime();
 
-  printf("Sequential: %dms", int((end_1 - start_1) * 1000));
+  printf("Sequential: %dms", int((endTime - startTime) * 1000));
   printf("\n");
 
-  delete[] x_1, delete[] y_1, delete[] z_1;
+  startTime = omp_get_wtime();
+  float_matrix_multiplication_omp(N, N, N, x, y, z);
+  endTime = omp_get_wtime();
 
-  x_1 = new float[n_1 * m_1];
-  y_1 = new float[n_1 * k_1];
-  z_1 = new float[m_1 * k_1];
-
-  for (int i = 0; i < n_1 * m_1; i++) {
-    x_1[i] = 1.0;
-  }
-  for (int i = 0; i < n_1 * k_1; i++) {
-    y_1[i] = 1.0;
-  }
-  for (int i = 0; i < m_1 * k_1; i++) {
-    z_1[i] = 0.0;
-  }
-
-  start_1 = omp_get_wtime();
-  float_matrix_multiplication_omp(m_1, n_1, k_1, x_1, y_1, z_1);
-  end_1 = omp_get_wtime();
-
-  printf("OpenMP: %dms\n\n", int((end_1 - start_1) * 1000));
-
-  delete[] x_1, delete[] y_1, delete[] z_1;
-
-  const int n_0f = 512;
-  const int m_0f = 512;
-  const int k_0f = 512;
-
-  float* x_0f = new float[n_0f * m_0f];
-  float* y_0f = new float[n_0f * k_0f];
-  float* z_0f = new float[m_0f * k_0f];
+  printf("OpenMP: %dms\n\n", int((endTime - startTime) * 1000));
 
   dim3 dimBlockf(16, 16);
-  dim3 dimGridf((m_0f + dimBlockf.x - 1) / dimBlockf.x,
-                (k_0f + dimBlockf.y - 1) / dimBlockf.y);
+  dim3 dimGridf((N + dimBlockf.x - 1) / dimBlockf.x,
+                (N + dimBlockf.y - 1) / dimBlockf.y);
 
-  for (int i = 0; i < n_0f * m_0f; i++) {
-    x_0f[i] = 1.0;
-  }
-  for (int i = 0; i < n_0f * k_0f; i++) {
-    y_0f[i] = 1.0;
-  }
-  for (int i = 0; i < m_0f * k_0f; i++) {
-    z_0f[i] = 0.0;
-  }
-
-  float_matrix_multiplication_cuda(m_0f, n_0f, k_0f, x_0f, y_0f, z_0f, dimGridf,
-                                   dimBlockf);
-
-  delete[] x_0f, delete[] y_0f, delete[] z_0f;
-
-  const int n_1f = 512;
-  const int m_1f = 512;
-  const int k_1f = 512;
+  float_matrix_multiplication_cuda(N, N, N, x, y, z, dimGridf, dimBlockf);
 
   dim3 dimBlock_1f(16, 16);
-  dim3 dimGrid_1f((m_1f + dimBlock_1f.x - 1) / dimBlock_1f.x,
-                  (k_1f + dimBlock_1f.y - 1) / dimBlock_1f.y);
+  dim3 dimGrid_1f((N + dimBlock_1f.x - 1) / dimBlock_1f.x,
+                  (N + dimBlock_1f.y - 1) / dimBlock_1f.y);
 
-  float* x_1f = new float[n_1f * m_1f];
-  float* y_1f = new float[n_1f * k_1f];
-  float* z_1f = new float[m_1f * k_1f];
+  block_float_matrix_multiplication_cuda(N, N, N, x, y, z, dimGrid_1f,
+                                         dimBlock_1f);
 
-  for (int i = 0; i < n_1f * m_1f; i++) {
-    x_1f[i] = 1.0;
-  }
-  for (int i = 0; i < n_1f * k_1f; i++) {
-    y_1f[i] = 1.0;
-  }
-  for (int i = 0; i < m_1f * k_1f; i++) {
-    z_1f[i] = 0.0;
-  }
-
-  block_float_matrix_multiplication_cuda(m_1f, n_1f, k_1f, x_1f, y_1f, z_1f,
-                                         dimGrid_1f, dimBlock_1f);
-
-  delete[] x_1f, delete[] y_1f, delete[] z_1f;
+  delete[] x, delete[] y, delete[] z;
 
   return 0;
 }
