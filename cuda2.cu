@@ -209,8 +209,8 @@ int main() {
   float *xFloat = new float[sizeX];
   float *yFloat = new float[sizeY];
   for (int i = 0; i < n; ++i) {
-    xFloat[i] = 5.0f;
-    yFloat[i] = 1.0f;
+    xFloat[i] = 5.0;
+    yFloat[i] = 0;
   }
 
   double startTime = omp_get_wtime();
@@ -221,16 +221,6 @@ int main() {
   printf("Sequential: %dms", int((endTime - startTime) * 1000.0));
   printf("\n");
 
-  delete[] xFloat;
-  delete[] yFloat;
-
-  xFloat = new float[sizeX];
-  yFloat = new float[sizeY];
-  for (int i = 0; i < n; ++i) {
-    xFloat[i] = 5.0f;
-    yFloat[i] = 1.0f;
-  }
-
   startTime = omp_get_wtime();
   saxpy_omp(n, aFloat, xFloat, incx, yFloat, incy);
   endTime = omp_get_wtime();
@@ -238,25 +228,12 @@ int main() {
   printf("OpenMP: %dms", int((endTime - startTime) * 1000.0));
   printf("\n");
 
-  delete[] xFloat;
-  delete[] yFloat;
-
   for (int i = 8; i <= 128; i *= 2) {
     block_size = i;
     num_blocks = (n + block_size - 1) / block_size;
 
-    xFloat = new float[sizeX];
-    yFloat = new float[sizeY];
-
-    for (int i = 0; i < n; ++i) {
-      xFloat[i] = 5.0;
-      yFloat[i] = 1.0;
-    }
     saxpy_gpu(n, aFloat, xFloat, incx, yFloat, incy, num_blocks, block_size);
     printf("\n");
-
-    delete[] xFloat;
-    delete[] yFloat;
   }
 
   const double aDouble = 10.0;
@@ -276,41 +253,19 @@ int main() {
   printf("Sequential: %dms", int((endTime - startTime) * 1000.0));
   printf("\n");
 
-  delete[] xDouble;
-  delete[] yDouble;
-
-  xDouble = new double[sizeX];
-  yDouble = new double[sizeY];
-  for (int i = 0; i < n; ++i) {
-    xDouble[i] = 5.0;
-    yDouble[i] = 1.0;
-  }
-
   startTime = omp_get_wtime();
   daxpy_omp(n, aDouble, xDouble, incx, yDouble, incy);
   endTime = omp_get_wtime();
 
   printf("OpenMP: %dms", int((endTime - startTime) * 1000));
   printf("\n");
-  delete[] xDouble;
-  delete[] yDouble;
 
   for (int i = 8; i <= 128; i *= 2) {
     block_size = i;
     num_blocks = (n + block_size - 1) / block_size;
 
-    xDouble = new double[sizeX];
-    yDouble = new double[sizeY];
-    for (int i = 0; i < n; ++i) {
-      xDouble[i] = 5.0;
-      yDouble[i] = 1.0;
-    }
-
     daxpy_gpu(n, aDouble, xDouble, incx, yDouble, incy, num_blocks, block_size);
     printf("\n");
-
-    delete[] xDouble;
-    delete[] yDouble;
   }
 
   return 0;
