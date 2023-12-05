@@ -179,7 +179,7 @@ void saxpy_omp(const int n, const float a, float *x, const int incx, float *y,
   const int biasx = incx < 0 ? (n - 1) * abs(incx) : 0;
   const int biasy = incy < 0 ? (n - 1) * abs(incy) : 0;
 
-#pragma omp parallel for num_threads(4)
+#pragma omp parallel for num_threads(2)
   for (int i = 0; i < n; i++) {
     y[biasy + i * incy] += a * x[biasx + i * incx];
   }
@@ -190,7 +190,7 @@ void daxpy_omp(const int n, const double a, double *x, const int incx,
   const int biasx = incx < 0 ? (n - 1) * abs(incx) : 0;
   const int biasy = incy < 0 ? (n - 1) * abs(incy) : 0;
 
-#pragma omp parallel for num_threads(4)
+#pragma omp parallel for num_threads(2)
   for (int i = 0; i < n; i++) {
     y[biasy + i * incy] += a * x[biasx + i * incx];
   }
