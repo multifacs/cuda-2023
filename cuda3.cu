@@ -222,7 +222,7 @@ void float_matrix_multiplication_omp(const int m, const int n, const int k,
 }
 
 int main() {
-  const int N = 1024;
+  const int N = 2048;
 
   float* x = new float[N * N];
   float* y = new float[N * N];
@@ -239,17 +239,17 @@ int main() {
   }
 
   float startTime = omp_get_wtime();
-  float_matrix_multiplication(N, N, N, x, y, z);
+  // float_matrix_multiplication(N, N, N, x, y, z);
   float endTime = omp_get_wtime();
 
-  printf("Sequential: %dms", int((endTime - startTime) * 1000));
-  printf("\n");
+  // printf("Sequential: %dms", int((endTime - startTime) * 1000));
+  // printf("\n");
 
-  startTime = omp_get_wtime();
-  float_matrix_multiplication_omp(N, N, N, x, y, z);
-  endTime = omp_get_wtime();
+  // startTime = omp_get_wtime();
+  // float_matrix_multiplication_omp(N, N, N, x, y, z);
+  // endTime = omp_get_wtime();
 
-  printf("OpenMP: %dms\n\n", int((endTime - startTime) * 1000));
+  // printf("OpenMP: %dms\n\n", int((endTime - startTime) * 1000));
 
   dim3 dimBlockf(16, 16);
   dim3 dimGridf((N + dimBlockf.x - 1) / dimBlockf.x,
